@@ -1,0 +1,52 @@
+{
+   "abstract" : "Glues a cache to your PSGI application",
+   "author" : [
+      "Jakob Voss"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Dist::Zilla version 4.200006, CPAN::Meta::Converter version 2.110930",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "Plack-Middleware-Cached",
+   "prereqs" : {
+      "configure" : {
+         "requires" : {
+            "ExtUtils::MakeMaker" : "6.30"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "Carp" : 0,
+            "Plack::Middleware" : 0,
+            "Plack::Util::Accessor" : 0,
+            "Scalar::Util" : 0,
+            "overload" : 0,
+            "parent" : 0
+         }
+      },
+      "test" : {
+         "requires" : {
+            "Plack::Builder" : 0,
+            "Test::More" : 0
+         }
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/nichtich/Plack-Middleware-CHI/issues"
+      },
+      "repository" : {
+         "type" : "git",
+         "url" : "https://github.com/nichtich/Plack-Middleware-CHI",
+         "web" : "https://github.com/nichtich/Plack-Middleware-CHI"
+      }
+   },
+   "version" : "0.11"
+}
+

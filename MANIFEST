@@ -1,0 +1,16 @@
+INSTALL
+LICENSE
+MANIFEST
+META.json
+META.yml
+Makefile.PL
+README
+dist.ini
+lib/Plack/Middleware/Cached.pm
+t/00_compile.t
+t/10_cache.t
+t/20_alien.t
+t/release-eol.t
+t/release-no-tabs.t
+t/release-pod-coverage.t
+t/release-pod-syntax.t
