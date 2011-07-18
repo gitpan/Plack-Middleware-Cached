@@ -1,17 +1,16 @@
+﻿use strict;
+use warnings;
 package Plack::Middleware::Cached;
 BEGIN {
-  $Plack::Middleware::Cached::VERSION = '0.11';
+  $Plack::Middleware::Cached::VERSION = '0.12';
 }
-# ABSTRACT: Glues a cache to your PSGI application
-
-use strict;
-use warnings;
+#ABSTRACT: Glues a cache to your PSGI application
 
 use parent 'Plack::Middleware';
 use Scalar::Util qw(blessed reftype);
 use Carp 'croak';
-use overload;
 use Plack::Util::Accessor qw(cache key set env);
+use utf8;
 
 sub prepare_app {
     my ($self) = @_;
@@ -30,6 +29,8 @@ sub prepare_app {
                 map { ($_, $env->{$_}) }
                 grep { defined $env->{$_} } @$key;
         } );
+    } elsif (not $self->key) {
+        $self->key('REQUEST_URI');
     }
 
     $self->set( sub { $_[0] } ) unless $self->set;
@@ -38,7 +39,7 @@ sub prepare_app {
 sub call {
     my ($self, $env) = @_;
 
-    my $key = $self->key ? $self->key->($env) : $env->{REQUEST_URI};
+    my $key = ref($self->key) ? $self->key->($env) : $env->{$self->key};
 
     return $self->app_code->($env) unless defined $key;
 
@@ -60,9 +61,11 @@ sub call {
     my @options = $self->set->($response, $env);
     if (@options and $options[0]) {
         $options[0] = [ $options[0] ];
-        if ($self->env) {
+        my $env_vars = $self->env;
+        if ($env_vars) {
+            $env_vars = [$env_vars] unless ref $env_vars;
             $options[0]->[1] = {
-                map { $_ => $env->{$_} } @{ $self->env }
+                map { $_ => $env->{$_} } @$env_vars
             };
         }
         $self->cache->set( $key, @options );
@@ -104,28 +107,32 @@ __END__
     use Plack::Builder;
     use Plack::Middleware::Cached;
 
-    my $cache = CHI->new( ... );           # create a cache
+    my $cache = CHI->new( ... );       # create a cache
 
     builder {
-        enable 'Cached', cache => $cache;  # enable caching
+        enable 'Cached',               # enable caching
+            cache => $cache,           # using this cache
+            key   => 'REQUEST_URI',    # using this key from env
+            env   => ['my.a','my.b'];  # and cache $env{'my.a'} and $env{'my.b'}
         $app;
     }
 
     # alternative creation without Plack::Builder
-    Plack::Middleware::Cached->wrap(
-        $app, cache => $cache,
-        key => [qw(REQUEST_URI HTTP_COOKIE)]  # optional configuration
-    );
+    Plack::Middleware::Cached->wrap( $app, cache => $cache );
 
 =head1 DESCRIPTION
 
-This module can be used to glue a cache to a L<PSGI> applications or middleware.
-A B<cache> is an object that provides at least two methods to get and set
-data, based on a key. Existing cache modules on CPAN include L<CHI>, L<Cache>,
-and L<Cache::Cache>. Plack::Middleware::Cached is put in front of a PSGI
-application as middleware. Given a request in form of a PSGI environment E, it
-either returns the matching response R from its cache, or it passed the request
-to the wrapped application, and stores the application's response in the cache:
+This module can be used to glue a cache to a L<PSGI> applications or
+middleware.  A B<cache> is an object that provides at least two methods to get
+and set data, based on a key. Existing cache modules on CPAN include L<CHI>,
+L<Cache>, and L<Cache::Cache>.  Although this module aims at caching PSGI
+applications, you can use it to cache any function that returns some response
+object based on a request environment.
+
+Plack::Middleware::Cached is put in front of a PSGI application as middleware.
+Given a request in form of a PSGI environment E, it either returns the matching
+response R from its cache, or it passed the request to the wrapped application,
+and stores the application's response in the cache:
 
                       ________          _____
     Request  ===E===>|        |---E--->|     |
@@ -146,9 +153,6 @@ Some application may also modify the environment E:
 If needed, you can configure Plack::Middleware::Cached with B<env> to also
 cache parts of the environment E, as it was returned by the application.
 
-Although this module aims at caching PSGI applications, you can use it to cache
-any function that returns some response object based on a request environment.
-
 =head1 CONFIGURATION
 
 =over 4
@@ -162,14 +166,16 @@ than can be used to create cache objects.
 
 =item key
 
-Code reference that maps a PSGI environment to a scalar key. The key is used
-as unique identifier to store and retrieve data in the cache. By default the
-REQUEST_URI is used as key. The request is not cached if undef is returned.
+Key to map a PSGI environment to a scalar key. By default only the REQUEST_URI
+variable is used, but you can provide another variable as scalar, a combination
+of variables as array reference, or a code reference that is called to
+calculate a key, given a PSGI environment. If this code returns undef, the
+request is not cached.
 
 =item env
 
-Array reference with keys from the environment that should be cached together
-with a response.
+Name of an environment variable or array reference with multiple variables from
+the environment that should be cached together with a response.
 
 =item set
 
@@ -184,7 +190,7 @@ additional values. For instance you can pass an expiration time like this:
         return ($response, expires_in => '20 min');
     }
 
-You can also use set to skip selected responses from caching:
+You can also use this method to skip selected responses from caching:
 
     set => sub {
         my ($response, $env) = @_;
@@ -203,7 +209,7 @@ The current version of this module does not support streaming responses.
 =head1 SEE ALSO
 
 There already are several modules for caching PSGI applications:
-L<Plack::Middleware::Cache> by Ingy dÃ¶t Net implements a simple file
+L<Plack::Middleware::Cache> by Ingy döt Net implements a simple file
 cache for PSGI responses. Panu Ervamaa created a more general module of
 same name, available at L<https://github.com/pnu/Plack-Middleware-Cache>.
 

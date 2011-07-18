@@ -40,6 +40,19 @@ sub run_test {
     is_deeply( $res, [200,[],['foo1']], 'third call: foo (cached)' );
 }
 
+$capp = builder {
+    enable 'Cached', cache => Mock->new, key => 'dummy';
+    sub { [200,[],[shift->{REQUEST_URI}]] };
+};
+
+$res = $capp->( { REQUEST_URI => 'doz', dummy => 123 } );
+is_deeply( $res, [200,[],['doz']], 'scalar key' );
+$res = $capp->( { REQUEST_URI => 'baz', dummy => 123 } );
+is_deeply( $res, [200,[],['doz']], 'scalar key' );
+$res = $capp->( { REQUEST_URI => 'baz', dummy => 456 } );
+is_deeply( $res, [200,[],['baz']], 'scalar key' );
+
+
 my $cache = Mock->new;
 $counter = 1;
 $capp = builder {
@@ -50,7 +63,7 @@ $capp = builder {
             return if ($response->[2]->[0] =~ /^notme/);
             return ($response, expires_in => '20 min');
         },
-        env => [qw(counter)];
+        env => [qw(counter)]; # env => 'counter';
     $app;
 };
 

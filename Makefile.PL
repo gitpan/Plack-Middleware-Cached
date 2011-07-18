@@ -13,7 +13,8 @@ my %WriteMakefileArgs = (
   'AUTHOR' => 'Jakob Voss',
   'BUILD_REQUIRES' => {
     'Plack::Builder' => '0',
-    'Test::More' => '0'
+    'Test::More' => '0',
+    'overload' => '0'
   },
   'CONFIGURE_REQUIRES' => {
     'ExtUtils::MakeMaker' => '6.30'
@@ -27,10 +28,10 @@ my %WriteMakefileArgs = (
     'Plack::Middleware' => '0',
     'Plack::Util::Accessor' => '0',
     'Scalar::Util' => '0',
-    'overload' => '0',
-    'parent' => '0'
+    'parent' => '0',
+    'utf8' => '0'
   },
-  'VERSION' => '0.11',
+  'VERSION' => '0.12',
   'test' => {
     'TESTS' => 't/*.t'
   }

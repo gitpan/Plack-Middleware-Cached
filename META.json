@@ -4,7 +4,7 @@
       "Jakob Voss"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 4.200006, CPAN::Meta::Converter version 2.110930",
+   "generated_by" : "Dist::Zilla version 4.200008, CPAN::Meta::Converter version 2.110930",
    "license" : [
       "perl_5"
    ],
@@ -25,28 +25,29 @@
             "Plack::Middleware" : 0,
             "Plack::Util::Accessor" : 0,
             "Scalar::Util" : 0,
-            "overload" : 0,
-            "parent" : 0
+            "parent" : 0,
+            "utf8" : 0
          }
       },
       "test" : {
          "requires" : {
             "Plack::Builder" : 0,
-            "Test::More" : 0
+            "Test::More" : 0,
+            "overload" : 0
          }
       }
    },
    "release_status" : "stable",
    "resources" : {
       "bugtracker" : {
-         "web" : "https://github.com/nichtich/Plack-Middleware-CHI/issues"
+         "web" : "https://github.com/nichtich/Plack-Middleware-Cached/issues"
       },
       "repository" : {
          "type" : "git",
-         "url" : "https://github.com/nichtich/Plack-Middleware-CHI",
-         "web" : "https://github.com/nichtich/Plack-Middleware-CHI"
+         "url" : "https://github.com/nichtich/Plack-Middleware-Cached",
+         "web" : "https://github.com/nichtich/Plack-Middleware-Cached"
       }
    },
-   "version" : "0.11"
+   "version" : "0.12"
 }
 
