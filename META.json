@@ -4,7 +4,7 @@
       "Jakob Voss"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 4.200008, CPAN::Meta::Converter version 2.110930",
+   "generated_by" : "Dist::Zilla version 4.300018, CPAN::Meta::Converter version 2.120921",
    "license" : [
       "perl_5"
    ],
@@ -21,19 +21,22 @@
       },
       "runtime" : {
          "requires" : {
-            "Carp" : 0,
-            "Plack::Middleware" : 0,
-            "Plack::Util::Accessor" : 0,
-            "Scalar::Util" : 0,
-            "parent" : 0,
-            "utf8" : 0
+            "Carp" : "0",
+            "Plack::Middleware" : "0",
+            "Plack::Util::Accessor" : "0",
+            "Scalar::Util" : "0",
+            "parent" : "0",
+            "strict" : "0",
+            "utf8" : "0",
+            "warnings" : "0"
          }
       },
       "test" : {
          "requires" : {
-            "Plack::Builder" : 0,
-            "Test::More" : 0,
-            "overload" : 0
+            "Clone" : "0",
+            "Plack::Builder" : "0",
+            "Test::More" : "0",
+            "overload" : "0"
          }
       }
    },
@@ -42,12 +45,13 @@
       "bugtracker" : {
          "web" : "https://github.com/nichtich/Plack-Middleware-Cached/issues"
       },
+      "homepage" : "https://github.com/nichtich/Plack-Middleware-Cached",
       "repository" : {
          "type" : "git",
-         "url" : "https://github.com/nichtich/Plack-Middleware-Cached",
+         "url" : "https://github.com/nichtich/Plack-Middleware-Cached.git",
          "web" : "https://github.com/nichtich/Plack-Middleware-Cached"
       }
    },
-   "version" : "0.12"
+   "version" : "0.13"
 }
 

@@ -1,8 +1,8 @@
 ﻿use strict;
 use warnings;
 package Plack::Middleware::Cached;
-BEGIN {
-  $Plack::Middleware::Cached::VERSION = '0.12';
+{
+  $Plack::Middleware::Cached::VERSION = '0.13';
 }
 #ABSTRACT: Glues a cache to your PSGI application
 
@@ -20,6 +20,7 @@ sub prepare_app {
     croak "cache object must provide get and set"
         unless can_cache( $self->cache );
 
+    # define how the caching key is calculated
     if (ref $self->key and ref $self->key eq 'ARRAY') {
         my $key = $self->key;
         $self->key( sub {
@@ -52,12 +53,12 @@ sub call {
                 $env->{$key} = $value;
             }
         }
+        $env->{'plack.middleware.cached'} = 1;
         return $response;
     }
 
     # pass through and cache afterwards
     my $response = $self->app_code->($env);
-
     my @options = $self->set->($response, $env);
     if (@options and $options[0]) {
         $options[0] = [ $options[0] ];
@@ -76,31 +77,22 @@ sub call {
 
 # allows caching PSGI-like applications not derived from Plack::Component
 sub app_code {
-    my $self = shift;
-    my $app = $self->app;
+    my $app = shift->app;
 
-    return $app if ref $app and reftype $app eq 'CODE';
-
-    #my $callable = overload::Method( $self->app, '&{}' );
-    #if ( $callable ) {
-    #    return sub { $callable->( $self, @_ ) };
-    #}
-
-    if ( blessed $app and $app->can('call') ) {
-        return sub { $app->call(@_) };
-    }
-
-    return $app;
+    (blessed $app and $app->can('call'))
+        ? sub { $app->call(@_) }
+        : $app;
 }
 
+# duck typing test
 sub can_cache {
     my $cache = shift;
-    return ( blessed $cache and $cache->can('set') and $cache->can('get') );
+
+    blessed $cache and
+        $cache->can('set') and $cache->can('get');
 }
 
 1;
-
-__END__
 
 =head1 SYNOPSIS
 
@@ -113,7 +105,7 @@ __END__
         enable 'Cached',               # enable caching
             cache => $cache,           # using this cache
             key   => 'REQUEST_URI',    # using this key from env
-            env   => ['my.a','my.b'];  # and cache $env{'my.a'} and $env{'my.b'}
+            env   => ['my.a','my.b'];  # and cache $env{'my.a'} and $env{'my.b'},
         $app;
     }
 
@@ -152,6 +144,26 @@ Some application may also modify the environment E:
 
 If needed, you can configure Plack::Middleware::Cached with B<env> to also
 cache parts of the environment E, as it was returned by the application.
+
+If Plack::Middleware::Cached retrieved a response from the cache, it sets the
+environment variable C<plack.middleware.cached>. You can inspect whether a
+response came from the cache or from the wrapped application like this:
+
+    builder {
+        enable sub {
+            my $app = shift;
+            sub {
+                my $env = shift;
+                my $res = $app->($env);
+                if ($env->{'plack.middleware.cached') {
+                    ...
+                }
+                return $res;
+            };
+        };
+        enable 'Cached', cache => $cache;
+        $app;
+    },
 
 =head1 CONFIGURATION
 

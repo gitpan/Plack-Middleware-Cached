@@ -1,11 +1,11 @@
 
 
 This archive contains the distribution Plack-Middleware-Cached,
-version 0.12:
+version 0.13:
 
   Glues a cache to your PSGI application
 
-This software is copyright (c) 2011 by Jakob Voss.
+This software is copyright (c) 2012 by Jakob Voss.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

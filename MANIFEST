@@ -10,6 +10,8 @@ lib/Plack/Middleware/Cached.pm
 t/00_compile.t
 t/10_cache.t
 t/20_alien.t
+t/30_debug_mode.t
+t/mock-cache
 t/release-eol.t
 t/release-no-tabs.t
 t/release-pod-syntax.t
