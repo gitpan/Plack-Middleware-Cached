@@ -23,8 +23,10 @@ my %WriteMakefileArgs = (
   "PREREQ_PM" => {
     "Plack" => "1.0"
   },
-  "TEST_REQUIRES" => {},
-  "VERSION" => "0.14",
+  "TEST_REQUIRES" => {
+    "Clone" => 0
+  },
+  "VERSION" => "0.15",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -32,6 +34,7 @@ my %WriteMakefileArgs = (
 
 
 my %FallbackPrereqs = (
+  "Clone" => 0,
   "Plack" => "1.0"
 );
 
